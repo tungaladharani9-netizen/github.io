@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dharani Tungala | Full Stack & Web3 Developer</title>
+<meta name="description" content="Portfolio of Dharani Tungala, an MCA student building full stack web apps and Web3 dApps on Aptos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- Colours and type: change them here and the whole site follows ---------- */
+:root{
+  --ink:#15123b;        /* page background */
+  --ink-soft:#1f1b52;   /* cards */
+  --line:rgba(236,234,255,.14);
+  --paper:#eceaff;      /* main text */
+  --muted:#a9a5d6;      /* secondary text */
+  --violet:#8a6cff;
+  --aqua:#3ee0c5;
+  --peach:#ffb28a;
+  --display:'Bricolage Grotesque',system-ui,sans-serif;
+  --body:'Figtree',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{background:var(--ink);color:var(--paper);font:400 1.05rem/1.7 var(--body);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--aqua);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;letter-spacing:-.02em}
+.wrap{width:min(1120px,92%);margin:0 auto}
+section{padding:110px 0 40px;position:relative}
+h2{font-size:clamp(2rem,4.5vw,3.2rem);margin-bottom:14px}
+.lead{color:var(--muted);max-width:60ch;margin-bottom:44px}
+
+/* Background: soft colour glows + a canvas of drifting "blocks" */
+#bg{position:fixed;inset:0;z-index:-1;width:100%;height:100%}
+body::before{content:"";position:fixed;inset:0;z-index:-2;
+  background:radial-gradient(900px 600px at 15% 10%,rgba(138,108,255,.35),transparent 60%),
+             radial-gradient(800px 600px at 90% 40%,rgba(62,224,197,.16),transparent 60%),
+             radial-gradient(700px 500px at 30% 100%,rgba(255,178,138,.16),transparent 60%),var(--ink)}
+
+/* Top progress bar and nav */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--violet),var(--aqua));z-index:60}
+nav{position:fixed;top:0;width:100%;z-index:50;backdrop-filter:blur(14px);background:rgba(21,18,59,.6);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;height:64px}
+.logo{font:800 1.25rem var(--display)}
+.logo span{color:var(--aqua)}
+.links{display:flex;gap:26px;font-weight:500;font-size:.95rem;color:var(--muted)}
+.links a{padding:7px 15px;border-radius:999px;transition:color .2s,background .2s}
+.links a:hover{color:var(--paper);background:rgba(255,255,255,.07)}
+.links a.on{color:var(--paper);background:rgba(138,108,255,.28)}
+.menu{display:none;background:none;border:1px solid var(--line);color:var(--paper);padding:6px 12px;border-radius:8px;font:inherit;cursor:pointer}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:90px}
+.hello{color:var(--aqua);font-weight:600;margin-bottom:18px}
+.hero h1{font-size:clamp(3rem,8vw,6.2rem);font-weight:800;margin-bottom:22px}
+.hero h1 .row{display:block;overflow:hidden}
+.hero h1 .row i{display:inline-block;font-style:normal;transform:translateY(105%);animation:rise 1s cubic-bezier(.2,.8,.2,1) forwards}
+.hero h1 .row:nth-child(2) i{animation-delay:.15s;-webkit-text-stroke:2px var(--violet);color:transparent}
+@keyframes rise{to{transform:none}}
+.role{font:500 clamp(1.1rem,2.4vw,1.6rem) var(--display);color:var(--peach);min-height:2em}
+.role::after{content:"";display:inline-block;width:3px;height:1.1em;background:var(--peach);margin-left:4px;vertical-align:-3px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.intro{max-width:56ch;color:var(--muted);margin:18px 0 32px}
+.btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn{padding:13px 26px;border-radius:999px;font-weight:600;border:1px solid var(--line);transition:transform .2s,background .2s}
+.btn.main{background:linear-gradient(135deg,var(--violet),#5d8bff);border-color:transparent}
+.btn:hover{transform:translateY(-3px);background-color:rgba(255,255,255,.08)}
+.btn.main:hover{background-color:transparent;filter:brightness(1.1)}
+.stats{display:flex;gap:40px;margin-top:56px;flex-wrap:wrap}
+.stats b{display:block;font:800 2.2rem var(--display);color:var(--aqua)}
+.stats span{color:var(--muted);font-size:.9rem}
+
+/* About */
+.about{display:grid;grid-template-columns:1.3fr 1fr;gap:50px;align-items:start}
+.about p+p{margin-top:16px;color:var(--muted)}
+.panel{background:var(--ink-soft);border:1px solid var(--line);border-radius:22px;padding:28px}
+.panel h3{font-size:1.2rem;margin-bottom:12px;color:var(--peach)}
+.panel li{list-style:none;padding:9px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+.panel li:last-child{border:0}
+.panel li strong{color:var(--paper);font-weight:600}
+
+/* Skills */
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.skill{background:var(--ink-soft);border:1px solid var(--line);border-radius:20px;padding:24px;transition:border-color .3s}
+.skill:hover{border-color:var(--violet)}
+.skill h3{font-size:1.1rem;margin-bottom:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:.85rem;padding:5px 13px;border-radius:999px;background:rgba(138,108,255,.16);color:#d8d0ff;border:1px solid rgba(138,108,255,.3)}
+.skill.web3 .chip{background:rgba(62,224,197,.12);color:#b4f5ea;border-color:rgba(62,224,197,.3)}
+.ai-note{margin-top:20px;padding:22px 26px;border-radius:20px;border:1px dashed var(--peach);color:var(--muted)}
+.ai-note b{color:var(--peach)}
+
+/* Projects */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px}
+.filters button{font:500 .95rem var(--body);color:var(--muted);background:none;border:1px solid var(--line);padding:8px 18px;border-radius:999px;cursor:pointer;transition:.2s}
+.filters button:hover{color:var(--paper)}
+.filters button.on{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr));gap:24px}
+.card{background:var(--ink-soft);border:1px solid var(--line);border-radius:22px;padding:28px;display:flex;flex-direction:column;
+  transform-style:preserve-3d;transition:transform .15s,border-color .3s,opacity .3s;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(138,108,255,.25),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover{border-color:var(--violet)}
+.card:hover::before{opacity:1}
+.card.hide{display:none}
+.tag{align-self:flex-start;font-size:.8rem;font-weight:600;padding:3px 12px;border-radius:999px;margin-bottom:16px}
+.tag.web3{background:rgba(62,224,197,.15);color:var(--aqua)}
+.tag.full{background:rgba(138,108,255,.2);color:#c9bdff}
+.tag.ai{background:rgba(255,178,138,.18);color:var(--peach)}
+.tag.game{background:rgba(255,107,157,.18);color:#ff9fc0}
+.tag.shop{background:rgba(255,209,102,.16);color:#ffd166}
+.card h3{font-size:1.45rem;margin-bottom:10px}
+.card p{color:var(--muted);margin-bottom:18px;font-size:.98rem}
+.card .chips{margin-bottom:20px}
+.card .chip{font-size:.78rem;padding:3px 10px}
+.repo{font-weight:600;color:var(--aqua);display:inline-flex;gap:6px;align-items:center}
+.repo:hover{text-decoration:underline}
+.private{color:var(--muted);font-size:.9rem}
+
+/* Education timeline (this one really is a sequence) */
+.timeline{border-left:2px solid var(--line);margin-left:8px;padding-left:34px}
+.step{position:relative;padding-bottom:34px}
+.step::before{content:"";position:absolute;left:-43px;top:8px;width:16px;height:16px;border-radius:50%;background:var(--ink);border:3px solid var(--violet)}
+.step:first-child::before{border-color:var(--aqua);box-shadow:0 0 0 6px rgba(62,224,197,.18)}
+.step small{color:var(--aqua);font-weight:600}
+.step h3{font-size:1.25rem;margin:2px 0}
+.step p{color:var(--muted)}
+
+/* Certificates and achievements */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.panel ul li::before{content:"✦ ";color:var(--violet)}
+
+.card .about-p{font-size:.98rem;margin-bottom:16px}
+.card h4{font:700 .95rem var(--display);color:var(--peach);margin-bottom:8px}
+.feat{list-style:none;margin-bottom:20px;flex:1}
+.feat li{position:relative;padding:3px 0 3px 22px;color:var(--muted);font-size:.93rem;line-height:1.55}
+.feat li::before{content:"";position:absolute;left:3px;top:.85em;width:8px;height:8px;border-radius:2px;background:var(--violet)}
+.stack{display:grid;gap:8px;margin-bottom:20px;padding:16px;border-radius:14px;background:rgba(0,0,0,.22);border:1px solid var(--line)}
+.stack div{display:grid;grid-template-columns:88px 1fr;gap:10px;font-size:.9rem}
+.stack dt{color:var(--aqua);font-weight:600}
+.stack dd{color:var(--paper)}
+.repos{display:flex;flex-direction:column;gap:6px}
+.score{display:flex;align-items:center;gap:14px;margin-top:12px}
+.score b{font:800 1.6rem var(--display);color:var(--peach);min-width:70px}
+.bar{flex:1;max-width:340px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--aqua));transition:width 1.4s .3s}
+.step.in .bar i{width:var(--w)}
+footer{padding:90px 0 50px;text-align:center}
+footer h2{margin-bottom:10px}
+footer .btns{justify-content:center;margin:26px 0 40px}
+footer small{color:var(--muted)}
+
+/* Floating colour orbs and a soft spotlight that follows the cursor */
+.orb{position:fixed;border-radius:50%;filter:blur(70px);z-index:-1;pointer-events:none;animation:drift 18s ease-in-out infinite alternate}
+.orb.a{width:340px;height:340px;background:var(--violet);top:8%;left:-80px;opacity:.45}
+.orb.b{width:300px;height:300px;background:var(--aqua);top:55%;right:-90px;opacity:.25;animation-duration:23s}
+.orb.c{width:260px;height:260px;background:var(--peach);bottom:-60px;left:35%;opacity:.22;animation-duration:27s}
+@keyframes drift{to{transform:translate(70px,-90px) scale(1.25)}}
+#spot{position:fixed;top:0;left:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;pointer-events:none;z-index:-1;
+  background:radial-gradient(circle,rgba(138,108,255,.16),transparent 65%);transition:transform .12s linear}
+
+/* Hero: text on the left, a floating code card on the right */
+.hero .wrap{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center}
+.code{background:rgba(31,27,82,.85);border:1px solid var(--line);border-radius:18px;padding:18px 24px 22px;backdrop-filter:blur(8px);
+  box-shadow:0 30px 80px rgba(0,0,0,.4);font:500 .95rem/1.9 ui-monospace,Menlo,Consolas,monospace;
+  animation:float 6s ease-in-out infinite,fadein 1s .6s backwards}
+.code .dots{display:flex;gap:7px;margin-bottom:12px}
+.code .dots i{width:11px;height:11px;border-radius:50%;background:#ff6b6b}
+.code .dots i:nth-child(2){background:#ffd166}
+.code .dots i:nth-child(3){background:var(--aqua)}
+.code .l{display:block;opacity:0;animation:fadein .5s forwards;white-space:pre}
+.k{color:#c5b4ff}.s{color:var(--aqua)}.n{color:var(--peach)}
+@keyframes float{50%{transform:translateY(-14px)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+
+/* Skills ticker */
+.marquee{overflow:hidden;border-block:1px solid var(--line);padding:18px 0;background:rgba(21,18,59,.5);margin-top:20px}
+.track{display:flex;width:max-content;animation:scroll 34s linear infinite}
+.marquee:hover .track{animation-play-state:paused}
+.track span{font:700 1.6rem var(--display);color:transparent;-webkit-text-stroke:1px var(--muted);white-space:nowrap;padding-right:44px}
+.track span:nth-child(3n){color:var(--paper);-webkit-text-stroke:0}
+.track span::after{content:"✦";margin-left:44px;color:var(--violet);-webkit-text-stroke:0}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* Heading underline draws itself when the heading appears */
+h2::after{content:"";display:block;height:4px;width:0;margin-top:12px;border-radius:4px;background:linear-gradient(90deg,var(--violet),var(--aqua));transition:width 1s .3s}
+h2.in::after{width:72px}
+footer h2::after{margin:12px auto 0}
+.step:first-child::before{animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(62,224,197,.55)}100%{box-shadow:0 0 0 16px transparent}}
+
+/* GitHub repo cards */
+.card.small p{flex:1}
+.meta{display:flex;gap:16px;color:var(--muted);font-size:.85rem;margin-bottom:14px}
+.sub{font:700 1.4rem var(--display);margin:6px 0 18px;color:var(--peach)}
+
+/* Certificates and achievements */
+.certs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;margin-bottom:46px}
+.cert{position:relative;background:var(--ink-soft);border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;overflow:hidden}
+.cert:hover{transform:translateY(-6px);border-color:var(--aqua)}
+.cert::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;transform:skewX(-20deg);
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.12),transparent);transition:left .7s;pointer-events:none}
+.cert:hover::after{left:130%}
+.ico{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:1.5rem;margin-bottom:14px;
+  background:linear-gradient(135deg,rgba(138,108,255,.35),rgba(62,224,197,.25));transition:transform .4s}
+.cert:hover .ico{transform:rotate(-8deg) scale(1.15)}
+.cert h4{font:700 1.05rem/1.3 var(--display);margin-bottom:4px}
+.cert p{color:var(--muted);font-size:.9rem;flex:1}
+.view{margin-top:16px;align-self:flex-start;font:600 .9rem var(--body);color:var(--ink);background:var(--aqua);border:0;border-radius:999px;padding:8px 20px;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.view:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(62,224,197,.4)}
+.card.reveal,.cert.reveal{transition:opacity .8s,transform .35s,border-color .3s}
+
+/* Certificate pop-up */
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(10,8,35,.82);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.open{opacity:1;visibility:visible}
+.sheet{width:min(860px,100%);max-height:90vh;overflow:auto;background:var(--ink-soft);border:1px solid var(--line);border-radius:22px;padding:22px;transform:scale(.9) translateY(24px);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.modal.open .sheet{transform:none}
+.sheet-top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px}
+.sheet-top h3{font-size:1.2rem}
+.x{background:none;border:1px solid var(--line);color:var(--paper);width:38px;height:38px;border-radius:50%;font-size:1.1rem;cursor:pointer;transition:transform .3s,background .2s}
+.x:hover{transform:rotate(90deg);background:rgba(255,255,255,.1)}
+.sheet img{width:100%;border-radius:12px;display:block}
+.empty{padding:56px 24px;text-align:center;border:2px dashed var(--line);border-radius:14px;color:var(--muted)}
+
+@media(max-width:900px){.hero .wrap{grid-template-columns:1fr}.code{display:none}}
+
+/* One reveal effect, used on section headings and cards */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s,transform .8s}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:820px){
+  .about,.two{grid-template-columns:1fr}
+  .menu{display:block}
+  .links{display:none;position:absolute;top:64px;left:0;right:0;flex-direction:column;gap:0;background:var(--ink);border-bottom:1px solid var(--line)}
+  .links.open{display:flex}
+  .links a{padding:16px 4%}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .hero h1 .row i{transform:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="orb a"></div><div class="orb b"></div><div class="orb c"></div>
+<div id="spot"></div>
+
+<nav>
+  <div class="wrap">
+    <a href="#top" class="logo">dharani<span>.dev</span></a>
+    <button class="menu" aria-label="Toggle menu">Menu</button>
+    <div class="links">
+      <a href="#top">Home</a><a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a>
+      <a href="#education">Education</a><a href="#achievements">Achievements</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+   <div class="hero-text">
+    <p class="hello">Hi, I'm</p>
+    <h1><span class="row"><i>Dharani</i></span><span class="row"><i>Tungala</i></span></h1>
+    <p class="role" id="role" aria-label="Full stack developer, Web3 builder, MCA student"></p>
+    <p class="intro">I build web apps people can actually use, from career guidance tools to a blockchain marketplace that lets farmers sell straight to customers.</p>
+    <div class="btns">
+      <a class="btn main" href="#projects">See my projects</a>
+      <a class="btn" href="https://github.com/tungaladharani9-netizen" target="_blank" rel="noopener">GitHub profile</a>
+    </div>
+    <div class="stats">
+      <div><b data-count="12">0</b><span>GitHub repositories</span></div>
+      <div><b data-count="2">0</b><span>Aptos Web3 apps</span></div>
+      <div><b data-count="2026">0</b><span>MCA graduate</span></div>
+    </div>
+   </div>
+   <aside class="code" aria-hidden="true">
+     <div class="dots"><i></i><i></i><i></i></div>
+     <span class="l" style="animation-delay:1s"><b class="k">const</b> dharani = {</span>
+     <span class="l" style="animation-delay:1.4s">  role: <b class="s">"Full stack + Web3"</b>,</span>
+     <span class="l" style="animation-delay:1.8s">  chain: <b class="s">"Aptos Move"</b>,</span>
+     <span class="l" style="animation-delay:2.2s">  stack: [<b class="s">"React"</b>, <b class="s">"PHP"</b>, <b class="s">"MySQL"</b>],</span>
+     <span class="l" style="animation-delay:2.6s">  mca: <b class="n">94</b>,</span>
+     <span class="l" style="animation-delay:3s">  seeking: <b class="s">"first IT role"</b></span>
+     <span class="l" style="animation-delay:3.4s">};</span>
+   </aside>
+  </div>
+</header>
+
+<div class="marquee" aria-hidden="true"><div class="track" id="track"></div></div>
+
+<section id="about">
+  <div class="wrap about">
+    <div class="reveal">
+      <h2>About me</h2>
+      <p>I'm an MCA student who enjoys turning an idea into a working product, from the database to the screen. My work covers full stack web development, database management and blockchain apps on Aptos.</p>
+      <p>I use AI coding tools to speed up writing code, but the thinking stays with me: I analyse the requirements, design the architecture, debug the problems and test every feature myself.</p>
+      <p>I'm looking for an entry-level IT role where I can work on real projects and keep learning.</p>
+    </div>
+    <div class="panel reveal">
+      <h3>What I bring</h3>
+      <ul>
+        <li><strong>Quick learner</strong> who picked up Web3 and Move</li>
+        <li><strong>Adaptable</strong> across front end, back end and chain</li>
+        <li><strong>Team player</strong> and an active listener</li>
+        <li><strong>Goal-oriented</strong>, I ship what I start</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <h2 class="reveal">Skills</h2>
+    <p class="lead reveal">The tools I use to build, grouped by what they do.</p>
+    <div class="skills" id="skillGrid"></div>
+    <div class="ai-note reveal"><b>AI-assisted development.</b> I build full stack and Web3 apps with AI coding tools for code generation, and I own the requirement analysis, system design, debugging and testing myself.</div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <h2 class="reveal">Projects</h2>
+    <p class="lead reveal">My featured projects are explained in detail first, with the exact frontend, backend and database each one uses. The rest of my GitHub repositories follow underneath.</p>
+    <div class="filters reveal" id="filters"></div>
+    <div class="grid" id="projectGrid"></div>
+    <h3 class="sub reveal" style="margin-top:60px">More from my GitHub</h3>
+    <p class="lead reveal" id="moreLead">Loading the rest of my repositories…</p>
+    <div class="grid" id="moreGrid"></div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <h2 class="reveal">Education</h2>
+    <p class="lead reveal">My path so far, latest first, with the percentage I scored and the year I passed out.</p>
+    <div class="timeline">
+      <div class="step reveal"><small>Passed out 2026</small><h3>MCA</h3><p>DVR &amp; Dr. HS MIC College of Technology, Kanchikacherla</p><div class="score"><b>94%</b><span class="bar"><i style="--w:94%"></i></span></div></div>
+      <div class="step reveal"><small>Passed out 2024</small><h3>B.Sc. Computer Science</h3><p>SVL Kranthi Degree College, Krishna University</p><div class="score"><b>93%</b><span class="bar"><i style="--w:93%"></i></span></div></div>
+      <div class="step reveal"><small>Passed out 2021</small><h3>Intermediate (MPC)</h3><p>SVL Kranthi Junior College, Avanigadda</p><div class="score"><b>96%</b><span class="bar"><i style="--w:96%"></i></span></div></div>
+      <div class="step reveal"><small>Passed out 2019</small><h3>SSC</h3><p>Sri Chaitanya Techno Curriculum, Avanigadda</p><div class="score"><b>98%</b><span class="bar"><i style="--w:98%"></i></span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="achievements">
+  <div class="wrap">
+    <h2 class="reveal">Certifications &amp; achievements</h2>
+    <p class="lead reveal">Courses I completed and things I have taken part in or won. Press View to open the certificate.</p>
+    <h3 class="sub reveal">Certifications</h3>
+    <div class="certs" id="certGrid"></div>
+    <h3 class="sub reveal">Achievements</h3>
+    <div class="certs" id="achGrid"></div>
+  </div>
+</section>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="sheet">
+    <div class="sheet-top"><h3 id="modalTitle"></h3><button class="x" id="modalClose" aria-label="Close">✕</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <h2 class="reveal">Want to see the code?</h2>
+    <p class="lead reveal" style="margin:0 auto">Every project with a public repository is on my GitHub.</p>
+    <div class="btns">
+      <a class="btn main" href="https://github.com/tungaladharani9-netizen?tab=repositories" target="_blank" rel="noopener">Browse repositories</a>
+      <a class="btn" href="https://linkedin.com/in/dharani-tungala-6437b432a" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <small>© <span id="year"></span> Dharani Tungala</small>
+  </div>
+</footer>
+
+<script>
+/* ---------- Content: edit the text here and the page updates ---------- */
+const GITHUB = 'https://github.com/tungaladharani9-netizen/';
+
+const skillGroups = [
+  { title: 'Languages', items: ['C', 'Java', 'PHP', 'TypeScript', 'Python', 'Node', 'Express'] },
+  { title: 'Web', items: ['HTML', 'CSS', 'JavaScript', 'React'] },
+  { title: 'Databases', items: ['DBMS', 'SQL', 'MySQL', 'MongoDB'] },
+  { title: 'Blockchain', items: ['Web3', 'Aptos', 'Move smart contracts', 'DApps'], web3: true },
+  { title: 'Tools', items: ['Git', 'GitHub', 'MS Word', 'MS Excel'] }
+];
+
+const projects = [
+  { name: 'AgriChain', type: 'web3', label: 'Web3 + Web2',
+    intro: `AgriChain is a marketplace that puts farmers and customers in direct contact. In the usual supply chain, middlemen take a share of the price and farmers lose money before their produce reaches a buyer. AgriChain removes that middle layer. I built it twice, once on the Aptos blockchain and once as a classic PHP web app, so the same idea works in both worlds.`,
+    points: [
+      'Farmers list their produce with price and details',
+      'Customers browse listings and buy straight from the farmer',
+      'No middlemen, so more of the money stays with the farmer',
+      'Web3 version records listings and orders through Aptos Move smart contracts',
+      'Blockchain records are transparent and cannot be quietly changed',
+      'Web2 version covers the same flow for users without a crypto wallet',
+      'Two separate repositories, one for each version'
+    ],
+    frontend: 'React, TypeScript (Web3) | HTML, CSS, JavaScript (Web2)',
+    backend: 'Aptos Move smart contracts (Web3) | PHP (Web2)',
+    database: 'Aptos on-chain storage (Web3) | MySQL (Web2)',
+    repos: ['agrichain', 'web2-agriculture'] },
+
+  { name: 'Aptos Gaming Tournament', type: 'game', label: 'Web3 game',
+    intro: `A tournament platform built for the Aptos blockchain. Anyone can open a tournament, set it up, and invite players to enter. Because the rules live in a smart contract instead of on an organiser's server, every player can check that the bracket and the results are fair.`,
+    points: [
+      'Organisers create a tournament from a simple React screen',
+      'Players discover open tournaments and enter them',
+      'Entry and tournament rules are enforced by Aptos Move smart contracts',
+      'Matches and results are recorded on-chain',
+      'Anyone can verify an outcome, so results cannot be quietly changed',
+      'Wallet connection acts as the player identity',
+      'Built to take part in the Aptos Web3 hackathon and bootcamp work'
+    ],
+    frontend: 'React, TypeScript',
+    backend: 'Aptos Move smart contracts',
+    database: 'Aptos blockchain (on-chain state, no separate database)',
+    repos: [], match: ['tournament'] },
+
+  { name: 'Rock Paper Scissors', type: 'game', label: 'Web3 game',
+    intro: `The classic hand game, rebuilt so that the referee is a smart contract. Two players pick rock, paper or scissors and the contract decides the winner using the usual rules. It is a small project, but it shows the full on-chain loop of connecting a wallet, sending a move and reading back a result.`,
+    points: [
+      'Two players join a round and each chooses rock, paper or scissors',
+      'The winner is decided by the classic rules inside the Move contract',
+      'Draws are handled too, so a round always ends with a clear result',
+      'Every round and its result is stored on the Aptos blockchain',
+      'Players cannot argue with the outcome because anyone can check it',
+      'Simple, quick React interface that works on phones and desktops',
+      'A compact project that helped me learn Move and wallet integration'
+    ],
+    frontend: 'React, TypeScript',
+    backend: 'Aptos Move smart contracts',
+    database: 'Aptos blockchain (on-chain state, no separate database)',
+    repos: [], match: ['rockpaper'] },
+
+  { name: 'Gaming Club', type: 'game', label: 'Web3 game',
+    intro: `Gaming Club is a multiplayer Web3 platform where players create games and join them on-chain. It works like an online club house: instead of one central server running everything, the smart contracts hold the games, the players and the results, so the club runs openly and fairly.`,
+    points: [
+      'Users create new games from the React interface',
+      'Other players browse the open games and join in',
+      'Multiplayer: several players can take part in the same game',
+      'Game creation and joining are handled by Aptos Move smart contracts',
+      'Game state and results live on the blockchain',
+      'Everything is transparent, so nobody can edit a result afterwards',
+      'Shares its foundations with my tournament project, built in the same Aptos stack'
+    ],
+    frontend: 'React, TypeScript',
+    backend: 'Aptos Move smart contracts',
+    database: 'Aptos blockchain (on-chain state, no separate database)',
+    repos: ['gamingclub'] },
+
+  { name: 'AI Legal Assistant', type: 'ai', label: 'AI app',
+    intro: `Getting a first answer to a legal question usually means booking an in-person consultation. The AI Legal Assistant offers a faster and more accessible alternative: type your question and get instant guidance. It connects a React interface to the Google Gemini API through a PHP backend, and keeps its data in MySQL.`,
+    points: [
+      'Chat-style interface where users describe their legal question in plain language',
+      'The PHP backend sends the question to the Google Gemini API',
+      'The AI answer is returned to the screen within moments',
+      'Gives people a quick starting point before they decide to see a lawyer',
+      'Keeps the API key on the server, away from the browser',
+      'MySQL stores user and conversation data',
+      'Responsive layout that works on phones as well as desktops'
+    ],
+    frontend: 'React',
+    backend: 'PHP, Google Gemini API',
+    database: 'MySQL',
+    repos: ['ai_legal_assistant'] },
+
+  { name: 'Career-Copilot', type: 'ai', label: 'AI app',
+    intro: `Career-Copilot is a personalised career guidance platform for students who are not sure what to learn or how to present themselves. It brings answers, grooming advice and a live AI assistant into one place, so a student does not have to search across many websites to prepare for their first job.`,
+    points: [
+      'Technical Q&A covering the skills employers ask about',
+      'Non-technical Q&A on topics like communication and interviews',
+      'Professional grooming tips for interviews and the workplace',
+      'AI chat assistant that gives real-time guidance',
+      'Clean pages for browsing questions by topic',
+      'PHP handles requests and talks to the database',
+      'MySQL stores the questions, answers and tips'
+    ],
+    frontend: 'HTML, CSS, JavaScript',
+    backend: 'PHP',
+    database: 'MySQL',
+    repos: ['career-copilot'] },
+
+  { name: 'StatioNest', type: 'shop', label: 'E-commerce',
+    intro: `StatioNest is an online store for stationery trading. Instead of building a heavy payment system, it uses WhatsApp, which most customers already use every day, for payments and for talking to the seller. That keeps ordering simple for buyers and easy to run for the shop owner.`,
+    points: [
+      'Product catalogue of stationery items with prices and details',
+      'Customers browse and choose the items they want',
+      'Payments are handled through WhatsApp integration',
+      'Chat-based customer support, so questions get answered quickly',
+      'Order and product data is saved on the server',
+      'PHP backend manages products and orders',
+      'MySQL keeps the product and order records'
+    ],
+    frontend: 'HTML, CSS, JavaScript',
+    backend: 'PHP, WhatsApp integration',
+    database: 'MySQL',
+    repos: ['stationest'] },
+
+  { name: 'ShopEase', type: 'shop', label: 'E-commerce',
+    intro: `ShopEase is an online shopping website built to make buying simple. Customers can browse products, pick what they like and place an order without any confusion, while the shop side keeps the products and orders organised in one database.`,
+    points: [
+      'Product listing pages that are easy to browse',
+      'Product details with price and description',
+      'Shopping cart where customers collect items before buying',
+      'Order placement with the order saved on the server',
+      'Clean, responsive design for phones and desktops',
+      'PHP backend manages products, users and orders',
+      'MySQL stores the product, customer and order records'
+    ],
+    frontend: 'HTML, CSS, JavaScript',
+    backend: 'PHP',
+    database: 'MySQL',
+    repos: [], match: ['shopease'] },
+
+  { name: 'Progress Tracker', type: 'full', label: 'Full stack',
+    intro: `Progress Tracker helps learners see where they actually stand. Users can create assessments, take them, and then get a topic-by-topic view of their performance, so they know exactly what to revise. Reports can be shared with peers or mentors, which makes it useful for study groups as well as individual practice.`,
+    points: [
+      'Create your own assessments on any topic',
+      'Take assessments and get scored results',
+      'Topic-wise performance breakdown to spot weak areas',
+      'Share progress reports with peers or mentors',
+      'Keeps a history of attempts so improvement is visible',
+      'PHP backend handles users, tests and scoring logic',
+      'MySQL stores assessments, answers and results'
+    ],
+    frontend: 'HTML, CSS, JavaScript',
+    backend: 'PHP',
+    database: 'MySQL',
+    repos: ['progress_tracker'] },
+
+  { name: 'Online Rental Hub', type: 'full', label: 'Full stack',
+    intro: `Online Rental Hub is a platform where people rent items instead of buying them. Owners list what they have, and renters browse, choose dates and send a booking request. Listings, bookings and users live in one system, so both sides can see what is available and what is booked.`,
+    points: [
+      'Owners list items for rent with price and availability',
+      'Renters browse and filter the listings',
+      'Booking requests with the rental dates chosen by the renter',
+      'Users register and log in as owner or renter',
+      'The status of every booking is tracked in the system',
+      'PHP backend handles listings, users and bookings',
+      'MySQL stores items, users and rental records'
+    ],
+    frontend: 'HTML, CSS, JavaScript',
+    backend: 'PHP',
+    database: 'MySQL',
+    repos: [], match: ['rental'] },
+
+  { name: 'Student Tracking Application', type: 'full', label: 'Full stack',
+    intro: `This is a faculty-facing system that replaces paper registers for student records. Teachers can manage attendance, marks and student details from one screen. It is deployed inside my college, so the code is not publicly hosted on GitHub.`,
+    points: [
+      'Faculty can record and update daily attendance',
+      'Marks can be entered and reviewed for each student',
+      'Complete student records kept in one place',
+      'Simple forms designed for quick data entry',
+      'PHP backend processes and validates the data',
+      'MySQL stores students, attendance and marks',
+      'Running as an internal college deployment'
+    ],
+    frontend: 'HTML, CSS, JavaScript',
+    backend: 'PHP',
+    database: 'MySQL',
+    repos: [] }
+];
+
+const filterNames = { all: 'All', web3: 'Web3', game: 'Gaming', ai: 'AI apps', shop: 'E-commerce', full: 'Full stack' };
+
+/* ---------- Build skills ---------- */
+document.getElementById('skillGrid').innerHTML = skillGroups.map(g => `
+  <div class="skill reveal ${g.web3 ? 'web3' : ''}">
+    <h3>${g.title}</h3>
+    <div class="chips">${g.items.map(i => `<span class="chip">${i}</span>`).join('')}</div>
+  </div>`).join('');
+
+/* ---------- Build projects ---------- */
+document.getElementById('projectGrid').innerHTML = projects.map((p, idx) => `
+  <article class="card reveal" data-type="${p.type}">
+    <span class="tag ${p.type}">${p.label}</span>
+    <h3>${p.name}</h3>
+    <p class="about-p">${p.intro}</p>
+    <h4>What it does</h4>
+    <ul class="feat">${p.points.map(t => `<li>${t}</li>`).join('')}</ul>
+    <dl class="stack">
+      <div><dt>Frontend</dt><dd>${p.frontend}</dd></div>
+      <div><dt>Backend</dt><dd>${p.backend}</dd></div>
+      <div><dt>Database</dt><dd>${p.database}</dd></div>
+    </dl>
+    <div class="repos" id="repos-${idx}">${p.repos.length
+      ? p.repos.map(r => `<a class="repo" href="${GITHUB}${r}" target="_blank" rel="noopener">View ${r} on GitHub ↗</a>`).join('')
+      : p.match ? '<span class="private">Finding the repository…</span>' : '<span class="private">Internal college deployment, no public repository</span>'}</div>
+  </article>`).join('');
+
+/* ---------- Certificates and achievements ----------
+   Paste each certificate's image link into the `image` field (for example 'https://.../c-certificate.jpg').
+   While it is empty, the View button shows a reminder instead. */
+const certificates = [
+  { title: 'C Programming', by: 'Great Learning', icon: '💻', image: '' },
+  { title: 'Data Structures using C', by: 'Great Learning', icon: '🧩', image: '' },
+  { title: 'Database Management System', by: 'Great Learning', icon: '🗄️', image: '' },
+  { title: 'HTML Basics', by: 'Cisco Networking Academy', icon: '🌐', image: '' },
+  { title: 'Basics of Python', by: 'Uniathena', icon: '🐍', image: '' },
+  { title: 'MS Workbooks and Worksheets', by: 'Uniathena', icon: '📊', image: '' },
+  { title: 'Skill Development Program', by: 'Naandi Foundation', icon: '🎓', image: '' }
+];
+const achievements = [
+  { title: 'Aptos Web3 Hackathon and Bootcamp', by: 'Participant', icon: '⛓️', image: '', note: 'Took part and built on the Aptos blockchain.' },
+  { title: 'Code Spark', by: 'KBN College', icon: '🚀', image: '', note: 'Completed this national-level hackathon.' },
+  { title: 'First Prize, Certificate Designing', by: 'Degree College', icon: '🏆', image: '', note: 'Won first place in the design competition.' }
+];
+const lists = { c: certificates, a: achievements };
+
+function certCard(item, key, i) {
+  return `
+  <article class="cert reveal">
+    <div class="ico">${item.icon}</div>
+    <h4>${item.title}</h4>
+    <p>${item.note || 'Issued by ' + item.by}</p>
+    <button class="view" data-k="${key}" data-i="${i}">View certificate</button>
+  </article>`;
+}
+document.getElementById('certGrid').innerHTML = certificates.map((c, i) => certCard(c, 'c', i)).join('');
+document.getElementById('achGrid').innerHTML = achievements.map((c, i) => certCard(c, 'a', i)).join('');
+
+/* ---------- Project filters ---------- */
+const filterBox = document.getElementById('filters');
+filterBox.innerHTML = Object.entries(filterNames)
+  .map(([key, name]) => `<button data-f="${key}" class="${key === 'all' ? 'on' : ''}">${name}</button>`).join('');
+
+filterBox.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  filterBox.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === btn));
+  document.querySelectorAll('#projectGrid .card').forEach(card => {
+    card.classList.toggle('hide', btn.dataset.f !== 'all' && card.dataset.type !== btn.dataset.f);
+  });
+});
+
+/* ---------- Typing effect in the hero ---------- */
+const roles = ['Full stack developer', 'Web3 builder on Aptos', 'MCA student', 'Problem solver'];
+const roleEl = document.getElementById('role');
+let roleIndex = 0, charIndex = 0, deleting = false;
+
+function typeRole() {
+  const word = roles[roleIndex];
+  charIndex += deleting ? -1 : 1;
+  roleEl.textContent = word.slice(0, charIndex);
+  let delay = deleting ? 40 : 90;
+  if (!deleting && charIndex === word.length) { deleting = true; delay = 1500; }
+  else if (deleting && charIndex === 0) { deleting = false; roleIndex = (roleIndex + 1) % roles.length; delay = 400; }
+  setTimeout(typeRole, delay);
+}
+typeRole();
+
+/* ---------- Count-up numbers ---------- */
+function countUp(el) {
+  const target = +el.dataset.count;
+  const start = performance.now();
+  (function tick(now) {
+    const t = Math.min((now - start) / 1400, 1);
+    el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+    if (t < 1) requestAnimationFrame(tick);
+  })(start);
+}
+setTimeout(() => document.querySelectorAll('[data-count]').forEach(countUp), 900);
+
+/* ---------- Reveal on scroll ---------- */
+const revealer = new IntersectionObserver(entries => {
+  entries.forEach(en => { if (en.isIntersecting) { const t = en.target; setTimeout(() => t.classList.add('in'), +t.dataset.d || 0); revealer.unobserve(t); } });
+}, { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(el => revealer.observe(el));
+
+/* ---------- Scroll progress and active nav link ---------- */
+const bar = document.getElementById('progress');
+addEventListener('scroll', () => {
+  bar.style.width = (scrollY / (document.body.scrollHeight - innerHeight) * 100) + '%';
+}, { passive: true });
+
+const navLinks = document.querySelectorAll('.links a');
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting) navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + en.target.id));
+  });
+}, { rootMargin: '-45% 0px -50% 0px' });
+document.querySelectorAll('section, header.hero').forEach(s => spy.observe(s));
+
+/* ---------- Stagger: cards in a row appear one after another ---------- */
+document.querySelectorAll('.grid, .skills, .certs').forEach(group => {
+  [...group.children].forEach((child, i) => { child.dataset.d = (i % 3) * 130; });
+});
+
+/* ---------- Skills ticker (list is repeated so the loop never shows a gap) ---------- */
+const tickerWords = skillGroups.flatMap(g => g.items);
+document.getElementById('track').innerHTML = [...tickerWords, ...tickerWords].map(w => `<span>${w}</span>`).join('');
+
+/* ---------- Certificate pop-up ---------- */
+const modal = document.getElementById('modal'), modalBody = document.getElementById('modalBody');
+let lastFocus = null;
+
+function showMessage(text) {
+  modalBody.innerHTML = `<div class="empty">${text}</div>`;
+}
+function openCert(item) {
+  document.getElementById('modalTitle').textContent = item.title + ' · ' + item.by;
+  if (item.image) {
+    const img = new Image();
+    img.alt = 'Certificate: ' + item.title;
+    img.onerror = () => showMessage('This image could not load. Check the link in the <code>certificates</code> list.');
+    img.src = item.image;
+    modalBody.replaceChildren(img);
+  } else {
+    showMessage('No image added yet. Paste the certificate image link into this item\'s <code>image</code> field.');
+  }
+  lastFocus = document.activeElement;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modalClose').focus();
+}
+function closeCert() {
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  if (lastFocus) lastFocus.focus();
+}
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.view');
+  if (btn) openCert(lists[btn.dataset.k][btn.dataset.i]);
+  if (e.target === modal || e.target.id === 'modalClose') closeCert();
+});
+addEventListener('keydown', e => { if (e.key === 'Escape') closeCert(); });
+
+/* ---------- Spotlight follows the cursor; buttons lean toward it ---------- */
+const spot = document.getElementById('spot');
+addEventListener('mousemove', e => { spot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`; });
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const b = btn.getBoundingClientRect();
+    btn.style.transform = `translate(${(e.clientX - b.left - b.width / 2) * .2}px, ${(e.clientY - b.top - b.height / 2) * .3}px)`;
+  });
+  btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+});
+
+/* ---------- The rest of my repositories, pulled live from GitHub ----------
+   Any repo not already featured above shows up here, so new ones appear on their own. */
+const escapeHtml = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const prettyName = n => n.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+const featuredRepos = new Set(projects.flatMap(p => p.repos));
+const squash = t => t.toLowerCase().replace(/[^a-z0-9]/g, '');
+const repoLink = name => `<a class="repo" href="${GITHUB}${name}" target="_blank" rel="noopener">View ${name} on GitHub ↗</a>`;
+const profileLink = `<a class="repo" href="${GITHUB}?tab=repositories" target="_blank" rel="noopener">Find it on my GitHub profile ↗</a>`;
+
+/* Projects with a `match` word are linked to whichever repository name contains it (for example "shopease") */
+function linkRepos(list) {
+  projects.forEach((p, idx) => {
+    if (!p.match) return;
+    const found = list.filter(r => p.match.some(m => squash(r.name).includes(m)));
+    found.forEach(r => featuredRepos.add(r.name));
+    document.getElementById('repos-' + idx).innerHTML = found.length ? found.map(r => repoLink(r.name)).join('') : profileLink;
+  });
+}
+const moreLead = document.getElementById('moreLead'), moreGrid = document.getElementById('moreGrid');
+
+function repoCard(r) {
+  const date = new Date(r.pushed_at || r.updated_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+  return `
+  <article class="card small reveal">
+    <span class="tag full">${escapeHtml(r.language || 'Code')}</span>
+    <h3>${escapeHtml(prettyName(r.name))}</h3>
+    <p>${escapeHtml(r.description) || 'Open the repository to see the code and the README.'}</p>
+    <div class="meta"><span>★ ${r.stargazers_count}</span><span>Updated ${date}</span></div>
+    <a class="repo" href="${escapeHtml(r.html_url)}" target="_blank" rel="noopener">View ${escapeHtml(r.name)} on GitHub ↗</a>
+  </article>`;
+}
+
+fetch('https://api.github.com/users/tungaladharani9-netizen/repos?per_page=100&sort=updated')
+  .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
+  .then(repos => {
+    linkRepos(repos);
+    const rest = repos.filter(r => !featuredRepos.has(r.name));
+    if (!rest.length) { moreLead.textContent = 'Every public repository is already featured above.'; return; }
+    moreLead.textContent = rest.length + ' more repositories, loaded live from GitHub.';
+    moreGrid.innerHTML = rest.map(repoCard).join('');
+    [...moreGrid.children].forEach((card, i) => { card.dataset.d = (i % 3) * 130; revealer.observe(card); });
+  })
+  .catch(() => {
+    linkRepos([]);
+    moreLead.innerHTML = 'The live list could not load right now. You can see every repository on <a class="repo" href="' + GITHUB + '?tab=repositories" target="_blank" rel="noopener">my GitHub profile ↗</a>.';
+  });
+
+/* Mobile menu */
+const menu = document.querySelector('.menu'), links = document.querySelector('.links');
+menu.addEventListener('click', () => links.classList.toggle('open'));
+links.addEventListener('click', () => links.classList.remove('open'));
+
+/* ---------- Project cards: a soft glow follows the cursor ---------- */
+document.addEventListener('mousemove', e => {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  const box = card.getBoundingClientRect();
+  const x = e.clientX - box.left, y = e.clientY - box.top;
+  card.style.setProperty('--mx', x + 'px');
+  card.style.setProperty('--my', y + 'px');
+});
+document.getElementById('projectGrid').addEventListener('mouseout', e => {
+  const card = e.target.closest('.card');
+  if (card) card.style.transform = '';
+});
+
+/* ---------- Background: a drifting chain of linked blocks (a nod to blockchain) ---------- */
+const canvas = document.getElementById('bg'), ctx = canvas.getContext('2d');
+const mouse = { x: -999, y: -999 };
+let nodes = [];
+
+function resizeCanvas() {
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  const count = Math.min(70, Math.floor(innerWidth * innerHeight / 22000));
+  nodes = Array.from({ length: count }, () => ({
+    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+    vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
+    size: 3 + Math.random() * 4
+  }));
+}
+addEventListener('resize', resizeCanvas);
+addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+resizeCanvas();
+
+function drawBackground() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  nodes.forEach((a, i) => {
+    a.x += a.vx; a.y += a.vy;
+    if (a.x < 0 || a.x > canvas.width) a.vx *= -1;
+    if (a.y < 0 || a.y > canvas.height) a.vy *= -1;
+
+    // Nodes shy away from the cursor a little
+    const dx = a.x - mouse.x, dy = a.y - mouse.y, d = Math.hypot(dx, dy);
+    if (d < 120) { a.x += dx / d * 1.2; a.y += dy / d * 1.2; }
+
+    // Link nearby nodes together
+    for (let j = i + 1; j < nodes.length; j++) {
+      const b = nodes[j], dist = Math.hypot(a.x - b.x, a.y - b.y);
+      if (dist < 150) {
+        ctx.strokeStyle = `rgba(138,108,255,${(1 - dist / 150) * .35})`;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+    }
+    ctx.fillStyle = i % 5 === 0 ? 'rgba(62,224,197,.7)' : 'rgba(236,234,255,.4)';
+    ctx.fillRect(a.x - a.size / 2, a.y - a.size / 2, a.size, a.size);
+  });
+  requestAnimationFrame(drawBackground);
+}
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) drawBackground();
+
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
